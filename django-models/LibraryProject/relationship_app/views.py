@@ -2,6 +2,7 @@ from django.contrib.auth import login
 from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import render, get_object_or_404
 from django.views.generic.detail import DetailView
+from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required, user_passes_test
 from .models import Book
 
@@ -13,6 +14,8 @@ class LibraryDetailView(DetailView):
     model = Library
     template_name = "relationship_app/library_detail.html"
     context_object_name = "library"
+def home(request):
+    return HttpResponse("Welcome to the Library Home Page!")
 def register(request):
     return render(request, "relationship_app/register.html")
 def is_admin(user):
