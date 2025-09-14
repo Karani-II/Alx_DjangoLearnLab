@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.contrib.auth.models import AbstractUser
 class Author(models.Model):
     name = models.CharField(max_length = 200)
     def __str__(self):
@@ -21,6 +22,10 @@ class Librarian(models.Model):
     Library = models.OneToOneField(Library , on_delete=models.CASCADE, related_name = 'library')
     def __str__(self):
         return self.name
+class CustomUser(AbstractUser):
+    date_of_birth = models.DateField(blank=True null=True)
+    profile_photo = models.ImageField()
+
 class UserProfile(models.Model):
     ROLE_CHOICES = [
         ('Admin', 'Admin'),
