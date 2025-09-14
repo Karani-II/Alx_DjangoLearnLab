@@ -22,9 +22,6 @@ class Librarian(models.Model):
     Library = models.OneToOneField(Library , on_delete=models.CASCADE, related_name = 'library')
     def __str__(self):
         return self.name
-class CustomUser(AbstractUser):
-    date_of_birth = models.DateField(blank=True null=True)
-    profile_photo = models.ImageField()
 
 class UserProfile(models.Model):
     ROLE_CHOICES = [
