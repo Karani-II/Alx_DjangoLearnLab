@@ -27,7 +27,6 @@ def register(request):
         form = UserCreationForm()
 
     return render(request, "relationship_app/register.html", {"form": form})
-def login 
 
 def is_admin(user):
     return hasattr(user, 'profile') and user.profile.role == 'Admin'
