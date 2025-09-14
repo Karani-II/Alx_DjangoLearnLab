@@ -5,7 +5,7 @@ class Book(models.Model):
     author = models.CharField(max_length = 100)
     publication_year = models.IntegerField()
 class CustomUser(AbstractUser):
-    date_of_birth = models.DateField(blank=True null=True)
-    profile_photo = models.ImageField()
+    date_of_birth = models.DateField(blank=True, null=True)
+    profile_photo = models.ImageField(upload_to="profile_photos/", blank=True, null=True)
 
 # Create your models here.
