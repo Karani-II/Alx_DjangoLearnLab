@@ -1,6 +1,7 @@
 from django.contrib.auth import login 
+from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.forms import UserCreationForm
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404 ,redirect 
 from django.views.generic.detail import DetailView
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -17,8 +18,16 @@ class LibraryDetailView(DetailView):
 def home(request):
     return HttpResponse("Welcome to the Library Home Page!")
 def register(request):
+    if request.method == "POST":
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect("login")
+    else:
         form = UserCreationForm()
-        return render(request, "relationship_app/register.html", {"form": form})
+
+    return render(request, "relationship_app/register.html", {"form": form})
+def login 
 
 def is_admin(user):
     return hasattr(user, 'profile') and user.profile.role == 'Admin'
