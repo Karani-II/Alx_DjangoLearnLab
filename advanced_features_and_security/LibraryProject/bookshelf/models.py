@@ -1,13 +1,19 @@
 from django.db import models
 from django.contrib.auth.models import BaseUserManager 
 from django.contrib.auth.models import AbstractUser 
+from django.contrib.auth.models import Permission
 class Book(models.Model):
     title = models.CharField(max_length = 200)
     author = models.CharField(max_length = 100)
     publication_year = models.IntegerField()
+class Meta:
+    permissions = [("can_view", "can_create", "can_edit","can_delete")]
 class CustomUser(AbstractUser):
     date_of_birth = models.DateField(blank=True, null=True)
     profile_photo = models.ImageField(upload_to="profile_photos/", blank=True, null=True)
+    class Meta:
+     permissions = [("can_view", "can_create", "can_edit","can_delete")]
+    
 class CustomUserManager(BaseUserManager):
     def create_user(self, username, email=None, password=None, **extra_fields):
         if not username:
