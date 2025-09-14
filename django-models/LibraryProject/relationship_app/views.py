@@ -17,14 +17,8 @@ class LibraryDetailView(DetailView):
 def home(request):
     return HttpResponse("Welcome to the Library Home Page!")
 def register(request):
-    if request.method == "POST":
-        form = UserCreationForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect("login")  
-    else:
         form = UserCreationForm()
-    return render(request, "relationship_app/register.html", {"form": form})
+        return render(request, "relationship_app/register.html", {"form": form})
 
 def is_admin(user):
     return hasattr(user, 'profile') and user.profile.role == 'Admin'
