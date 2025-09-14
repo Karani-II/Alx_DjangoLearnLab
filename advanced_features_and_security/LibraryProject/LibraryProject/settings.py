@@ -23,8 +23,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-04kv6y@d@l(y!!-dt-4d&guu)ljcc2ed79xj_$37#qn0q9s!$='
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
+DEBUG = False 
+SECURE_CONTENT_TYPE_NOSNIFF = True  
+SECURE_BROWSER_XSS_FILTER = True 
+X_FRAME_OPTIONS = "DENY" 
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True 
 ALLOWED_HOSTS = []
 
 
@@ -38,7 +42,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'bookshelf',
-    'relationship_app'
+    'relationship_app',
+    'csp'
 ]
 
 MIDDLEWARE = [
@@ -48,6 +53,7 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'csp.middleware.CSPMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
