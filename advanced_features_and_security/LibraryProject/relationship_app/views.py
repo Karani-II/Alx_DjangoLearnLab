@@ -8,7 +8,6 @@ from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required, user_passes_test
 from .models import Book
 from .models import Library
-from .forms import BookForm
 
 def list_books(request):
     books = Book.objects.all()
