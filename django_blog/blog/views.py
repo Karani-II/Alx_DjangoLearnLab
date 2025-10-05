@@ -1,10 +1,14 @@
-from django.shortcuts import render, redirect 
-from django import forms
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django import forms 
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
-from .models import Profile
-
+from .models import Profile, Post
+from .forms import PostForm
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.urls import reverse_lazy
+from .models import Post
 class Registration(UserCreationForm):
     email = forms.EmailField(required=True)
 
@@ -39,7 +43,64 @@ def profile(request):
     }
     return render(request, 'userprofile.html', context)
 
+class PostListView(ListView):
+    model = Post 
+    template_name = 'listing.html'
+class PostDetailView(DetailView):
+    model = Post
+    template_name = 'post_detail.html'
+class PostCreateView(LoginRequiredMixin, CreateView):
+    model = Post
+    fields = ['title', 'content']
+    template_name = 'post_form.html'
+    success_url = reverse_lazy('post_list')
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        return super().form_valid(form)
+class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Post
+    fields = ['title', 'content']
+    template_name = 'post_form.html'
+    success_url = reverse_lazy('post_list')
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        return super().form_valid(form)
+
+    def test_func(self):
+        post = self.get_object()
+        return self.request.user == post.author
+class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Post
+    template_name = 'delete.html'
+    success_url = reverse_lazy('post_list')
+    def test_func(self):
+        post = self.get_object()
+        return self.request.user == post.author
+
+@login_required
+def create_post(request):
+    if request.method == 'POST':
+        form = PostForm(request.POST)
+        if form.is_valid():
+            post = form.save(commit=False)  
+            post.author = request.user      
+            post.save()
+            return redirect('post_detail', pk=post.pk)
+    else:
+        form = PostForm()
+    return render(request, 'create_post.html', {'form': form})
 
 
+@login_required
+def update_post(request, pk):
+    post = get_object_or_404(Post, pk=pk, author=request.user)  
+    if request.method == 'POST':
+        form = PostForm(request.POST, instance=post)
+        if form.is_valid():
+            form.save()
+            return redirect('post_detail', pk=post.pk)
+    else:
+        form = PostForm(instance=post)
+    return render(request, 'update_post.html', {'form': form})      
 
 # Create your views here.

@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Delete: {{ post.title }}</title>
+</head>
+<body>
+<h1>Delete Post</h1>
+<p>Are you sure you want to delete "{{ post.title }}"?</p>
+<form method="post">
+ {% csrf_token %}
+<button type="submit">Yes, delete</button>
+<a href="{% url 'blog:post_detail' post.pk %}">No, go back</a>
+</form>
+</body>
+</html>

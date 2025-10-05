@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{{ title|default:'Create or Edit Post' }}</title>
+</head>
+<body>
+<h1>{{ title|default:'Create or Edit Post' }}</h1>
+<form method="post">
+ {% csrf_token %}
+ {{ form.non_field_errors }}
+2
+<p>
+ {{ form.title.label_tag }}<br>
+ {{ form.title.errors }}
+ {{ form.title }}
+</p>
+<p>
+ {{ form.content.label_tag }}<br>
+ {{ form.content.errors }}
+ {{ form.content }}
+</p>
+<button type="submit">Save</button>
+<a href="{% url 'blog:post_list' %}">Cancel</a>
+</form>
+</body>
+</html>
