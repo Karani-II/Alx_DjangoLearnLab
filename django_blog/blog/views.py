@@ -102,32 +102,27 @@ def update_post(request, pk):
     else:
         form = PostForm(instance=post)
     return render(request, 'update_post.html', {'form': form})  
-# Display post details and handle new comment creation
-def post_detail(request, pk):
-    post = get_object_or_404(Post, pk=pk)
-    comments = post.comments.all().order_by('-created_at')
+from django.views.generic import CreateView
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import get_object_or_404
+from django.urls import reverse_lazy
+from .models import Post, Comment
+from .forms import CommentForm
 
-    if request.method == 'POST':
-        if not request.user.is_authenticated:
-            return redirect('login')  # prevent unauthenticated posting
-        form = CommentForm(request.POST)
-        if form.is_valid():
-            comment = form.save(commit=False)
-            comment.post = post
-            comment.author = request.user
-            comment.save()
-            return redirect('post_detail', pk=pk)
-    else:
-        form = CommentForm()
+class CommentCreateView(LoginRequiredMixin, CreateView):
+    model = Comment
+    form_class = CommentForm
+    template_name = 'comment_form.html'
 
-    return render(request, 'post_detail.html', {
-        'post': post,
-        'comments': comments,
-        'form': form
-    })
+    def form_valid(self, form):
+        post = get_object_or_404(Post, pk=self.kwargs['pk'])
+        form.instance.post = post
+        form.instance.author = self.request.user
+        return super().form_valid(form)
 
+    def get_success_url(self):
+        return reverse_lazy('post_detail', kwargs={'pk': self.object.post.pk})
 
-# Update comment (only by author)
 class CommentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Comment
     form_class = CommentForm
@@ -144,8 +139,6 @@ class CommentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         comment = self.get_object()
         return self.request.user == comment.author
 
-
-# Delete comment (only by author)
 class CommentDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Comment
     template_name = 'comment_confirm_delete.html'
