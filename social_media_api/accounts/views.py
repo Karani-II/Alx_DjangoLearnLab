@@ -4,6 +4,8 @@ from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.authentication import TokenAuthentication
 from .models import CustomUser
 from .serializers import RegisterSerializer, CustomUserSerializers 
 
@@ -43,3 +45,7 @@ class LoginView(generics.GenericAPIView):
             {"error": "Invalid credentials"},
             status=status.HTTP_400_BAD_REQUEST
         )
+class UserProfileView(generics.RetrieveAPIView):
+    serializer_class = CustomUserSerializers
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
