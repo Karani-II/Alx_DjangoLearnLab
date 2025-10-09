@@ -10,5 +10,4 @@ class CustomUser(AbstractUser):
         related_name='following',
         blank=True
     )
-
 # Create your models here.
