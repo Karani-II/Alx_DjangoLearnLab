@@ -67,20 +67,18 @@ class FeedView(generics.ListAPIView):
 
 
 
+
 @api_view(['POST'])
 @permission_classes([permissions.IsAuthenticated])
-def like_post(request, post_id):
-    post = get_object_or_404(Post, id=post_id)
+def like_post(request, pk):
+    post = generics.get_object_or_404(Post, pk=pk)
 
-    existing_like = Like.objects.filter(user=request.user, post=post).first()
-    if existing_like:
+    like, created = Like.objects.get_or_create(user=request.user, post=post)
+
+    if not created:
         return Response({'error': 'You have already liked this post.'}, status=status.HTTP_400_BAD_REQUEST)
 
-    
-    Like.objects.create(user=request.user, post=post)
-
-    
-    if post.author != request.user:  
+    if post.author != request.user:
         Notification.objects.create(
             recipient=post.author,
             actor=request.user,
@@ -94,8 +92,8 @@ def like_post(request, post_id):
 
 @api_view(['POST'])
 @permission_classes([permissions.IsAuthenticated])
-def unlike_post(request, post_id):
-    post = get_object_or_404(Post, id=post_id)
+def unlike_post(request, pk):
+    post = generics.get_object_or_404(Post, pk=pk)
     like = Like.objects.filter(user=request.user, post=post).first()
 
     if not like:
