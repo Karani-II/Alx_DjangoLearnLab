@@ -16,10 +16,10 @@ class Comment(models.Model):
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete = models.CASCADE, related_name='comments')
 
 class Like(models.Model):
-    User_Liking = models.ForeignKey(CustomUser,on_delete = models.CASCADE, related_name = 'User_liking')
+    user = models.ForeignKey(CustomUser,on_delete = models.CASCADE, related_name = 'User_liking')
     Post_liked = models.ForeignKey(Post, on_delete =models.CASCADE, related_name="Liked_post")
     class Meta:
-        unique_together = ('User_Liking', 'Post_liked')
+        unique_together = ('user', 'Post_liked')
 
 
     
